@@ -91,6 +91,7 @@ tsdb.wait()
  * **send_metrics_limit** - (default: 1000) send metrics per second limit. **TELNET ONLY**
  * **send_metrics_batch_limit** - (default: 50) set max batch size. **HTTP ONLY**
  * **http_compression** - (default: gzip) set compression for sending metrics. Set to None to disable. **HTTP ONLY**
+ * **victoria_metrics** - (default: False) enable Victoria-Metrics compatible mode. **HTTP ONLY**
 
 ## DEPRECATED TSDBClient arguments
  * **raise_duplicate** - (default: True) raise MetricDuplicated exception when metric duplicated **DEPRECATED in 0.4.0**

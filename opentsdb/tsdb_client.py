@@ -37,7 +37,8 @@ class TSDBClient:
                  http_compression: str=TSDB_DEFAULT_HTTP_COMPRESSION,
                  uri: str=TSDB_URI,
                  send_metrics_limit: int=TSDB_SEND_METRICS_PER_SECOND_LIMIT,
-                 send_metrics_batch_limit: int=TSDB_SEND_METRICS_BATCH_LIMIT):
+                 send_metrics_batch_limit: int=TSDB_SEND_METRICS_BATCH_LIMIT,
+                 victoria_metrics: bool=False):
 
         self.host_tag = host_tag
         self.protocol = protocol
@@ -46,6 +47,7 @@ class TSDBClient:
         self.send_metrics_limit = send_metrics_limit if protocol == TSDBConnectProtocols.TELNET else 0
         self.send_metrics_batch_limit = send_metrics_batch_limit if protocol == TSDBConnectProtocols.HTTP else 0
         self.http_compression = http_compression
+        self.victoria_metrics = victoria_metrics
 
         self._tsdb_connect = None
         self._close_client = threading.Event()
@@ -60,7 +62,8 @@ class TSDBClient:
     def init_client(self, host, port: int=TSDB_PORT, uri: Optional[str]=None):
         self._tsdb_connect = TSDBConnectProtocols.get_connect(
             self.protocol, host, port, self.check_tsdb_alive,
-            compression=self.http_compression, uri=uri
+            compression=self.http_compression, uri=uri,
+            victoria_metrics=self.victoria_metrics
         )
 
         self._metric_send_thread = TSDBConnectProtocols.get_push_thread(

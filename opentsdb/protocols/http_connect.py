@@ -34,13 +34,14 @@ class HttpTSDBConnect(TSDBConnect):
     SEND_TIMEOUT = 2
 
     def __init__(self, host: str, port: int, check_tsdb_alive: bool,
-                 compression: str, uri: Optional[str]):
+                 compression: str, uri: Optional[str], victoria_metrics: bool=False):
         if uri is None:
             self.tsdb_urls = TSDBUrls.from_host_and_port(host, int(port))
         else:
             self.tsdb_urls = TSDBUrls.from_uri(uri)
         super().__init__(host, port, check_tsdb_alive)
         self.compression = compression
+        self.victoria_metrics = victoria_metrics
         assert self.compression in ['gzip', None], 'Unsupported HTTP compression type: %s' % self.compression
         if self.compression:
             logger.info("Compression %s is enabled", self.compression)
@@ -70,4 +71,15 @@ class HttpTSDBConnect(TSDBConnect):
             self.tsdb_urls.put,
             data=gzip.compress(json.dumps(metrics).encode()) if self.compression else json.dumps(metrics),
             timeout=self.SEND_TIMEOUT)
+
+        # victoria-metrics does not support returning details, see here:
+        # https://github.com/VictoriaMetrics/VictoriaMetrics/issues/959
+        # so we fake response
+        if self.victoria_metrics and response.content == b'':
+            # consider only 204 success
+            if response.status_code != 204:
+                return {'failed': len(metrics)}
+            else:
+                return {'success': len(metrics)}
+
         return response.json()
