@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "opentsdb-py"
+version = "0.6.0"
+description = "Python3 client for OpenTSDB"
+authors = ["opentsdb_py.egg-info <s.suglobov@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+classifiers=[
+  'Environment :: Console',
+  'Intended Audience :: Developers',
+  'License :: OSI Approved :: MIT License',
+  'Natural Language :: English',
+  'Operating System :: Microsoft :: Windows',
+  'Operating System :: POSIX',
+  'Programming Language :: Python :: 3.7',
+  'Programming Language :: Python :: 3 :: Only'
+]
+packages = [{include = "opentsdb"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
